@@ -12,7 +12,7 @@ fun Application.configureAuth() {
     routing {
         post("/reg") {
             val data: RegistrationModel = call.receive()
-            val result = AuthController.proceedRegistration(data)
+            val result = AuthController.executeRegistration(data)
 
             call.respond(
                 status = result.code,
