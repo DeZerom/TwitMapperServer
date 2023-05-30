@@ -34,4 +34,6 @@ dependencies {
 
     //neo4j
     implementation("org.neo4j.driver:neo4j-java-driver:5.8.0")
+    implementation("org.neo4j:neo4j-ogm-core:4.0.5")
+    implementation("org.neo4j:neo4j-ogm-bolt-driver:4.0.5")
 }

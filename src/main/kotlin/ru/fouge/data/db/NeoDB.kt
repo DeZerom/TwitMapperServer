@@ -4,8 +4,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.neo4j.driver.Driver
 import org.neo4j.driver.GraphDatabase
-import org.neo4j.driver.Query
-import org.neo4j.driver.Session
+import org.neo4j.ogm.drivers.bolt.driver.BoltDriver
+import org.neo4j.ogm.session.Session
+import org.neo4j.ogm.session.SessionFactory
 
 object NeoDB {
 
@@ -13,17 +14,14 @@ object NeoDB {
         "neo4j+s://8fe44843.databases.neo4j.io",
         AuthTokenObj.getToken()
     )
+    private val sessionFactory = SessionFactory(BoltDriver(driver), "ru.fouge.data.models")
 
-    suspend fun executeWriteQuery(query: Query): Boolean = withContext(Dispatchers.IO) {
-        val session = driver.session(Session::class.java)
-
-        session.executeWrite {
-            try {
-                it.run(query)
-                true
-            } catch (e: Exception) {
-                false
-            }
+    suspend fun executeQuery(query: Session.() -> Unit): Boolean = withContext(Dispatchers.IO) {
+        try {
+            sessionFactory.openSession().apply(query)
+            true
+        } catch (e: Exception) {
+            false
         }
     }
 
