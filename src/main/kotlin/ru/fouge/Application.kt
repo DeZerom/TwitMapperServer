@@ -4,6 +4,7 @@ import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import ru.fouge.plugins.configureAuth
+import ru.fouge.plugins.configureComments
 import ru.fouge.plugins.configureSerialization
 import ru.fouge.plugins.configureTwits
 
@@ -16,4 +17,5 @@ fun Application.module() {
     configureSerialization()
     configureAuth()
     configureTwits()
+    configureComments()
 }

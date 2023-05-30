@@ -10,6 +10,10 @@ sealed interface DomainRespondResult<out T> {
         ALREADY_EXISTING_ACCOUNT("already_existing_account", "Аккаунт с таким логином уже существует"),
         WRONG_CREDENTIALS("wrong_credentials", "Неверный логин/пароль"),
 
+        //comment
+        WRONG_COMMETN_CREATION_DATA("wrong_creation_data", "Пустой текст комментария или неверно указан родительский твит"),
+
+
         //general
         SOMETHING_WENT_WRONG("something_went_wrong", "Что-то пошло не так"),
         UNAUTHORIZED("unauthorized", "Вы не авторизованы")
