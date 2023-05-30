@@ -10,6 +10,6 @@ data class NeoUserModel(
     @GeneratedValue
     val id: Long? = null,
 
-    val login: String,
-    val password: String
+    val login: String? = null,
+    val password: String? = null
 )

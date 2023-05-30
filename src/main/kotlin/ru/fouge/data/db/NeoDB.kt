@@ -7,6 +7,8 @@ import org.neo4j.driver.GraphDatabase
 import org.neo4j.ogm.drivers.bolt.driver.BoltDriver
 import org.neo4j.ogm.session.Session
 import org.neo4j.ogm.session.SessionFactory
+import java.util.logging.Level
+import java.util.logging.Logger
 
 object NeoDB {
 
@@ -21,7 +23,17 @@ object NeoDB {
             sessionFactory.openSession().apply(query)
             true
         } catch (e: Exception) {
+            Logger.getAnonymousLogger().log(Level.WARNING, e.stackTraceToString())
             false
+        }
+    }
+
+    suspend fun <T> executeQueryWithResult(query: Session.() -> T): T? = withContext(Dispatchers.IO) {
+        try {
+            sessionFactory.openSession().run(query)
+        } catch (e: Exception) {
+            Logger.getAnonymousLogger().log(Level.WARNING, e.stackTraceToString())
+            null
         }
     }
 

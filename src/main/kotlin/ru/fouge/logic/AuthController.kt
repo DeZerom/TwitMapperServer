@@ -14,6 +14,12 @@ object AuthController {
             result = DomainRespondResult.Error.NON_VALID_CREDENTIALS
         )
 
+        val user = AuthDao.getUserByLogin(data.login ?: "")
+        if (user != null) return DomainRespond(
+            code = HttpStatusCode.Conflict,
+            result = DomainRespondResult.Error.ALREADY_EXISTING_ACCOUNT
+        )
+
         val result = AuthDao.registerUser(data)
 
         return DomainRespond.success(result)
