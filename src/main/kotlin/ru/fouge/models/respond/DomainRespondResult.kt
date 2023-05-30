@@ -11,7 +11,8 @@ sealed interface DomainRespondResult<out T> {
         WRONG_CREDENTIALS("wrong_credentials", "Неверный логин/пароль"),
 
         //general
-        SOMETHING_WENT_WRONG("something_went_wrong", "Что-то пошло не так")
+        SOMETHING_WENT_WRONG("something_went_wrong", "Что-то пошло не так"),
+        UNAUTHORIZED("unauthorized", "Вы не авторизованы")
     }
 
 }

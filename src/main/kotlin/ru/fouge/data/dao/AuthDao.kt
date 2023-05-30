@@ -1,7 +1,5 @@
 package ru.fouge.data.dao
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.neo4j.ogm.cypher.BooleanOperator
 import org.neo4j.ogm.cypher.ComparisonOperator
 import org.neo4j.ogm.cypher.Filter
@@ -15,6 +13,12 @@ import ru.fouge.models.auth.Token
 import ru.fouge.models.auth.UserModel
 
 object AuthDao {
+
+    suspend fun checkToken(token: String): Boolean {
+        val user = getUserByToken(token = token)
+
+        return user != null
+    }
 
     suspend fun registerUser(data: RegistrationModel): Boolean {
         val userModel = data.toNeoUserModel()
@@ -33,7 +37,7 @@ object AuthDao {
         return result?.toInternal()
     }
 
-    suspend fun getTokenByLoginAndPassword(login: String, password: String): Token? = withContext(Dispatchers.IO) {
+    suspend fun getTokenByLoginAndPassword(login: String, password: String): Token? {
         val user = NeoDB.executeQueryWithResult {
             loadAll(
                 NeoUserModel::class.java,
@@ -46,12 +50,22 @@ object AuthDao {
             )?.firstOrNull()
         }
 
-        if (user?.token != null)
+        return if (user?.token != null)
             Token(token = user.token)
         else
             null
     }
 
+    private suspend fun getUserByToken(token: String): NeoUserModel? {
+        return NeoDB.executeQueryWithResult {
+            loadAll(
+                NeoUserModel::class.java,
+                Filter(TOKEN_PROP_NAME, ComparisonOperator.EQUALS, token)
+            )?.firstOrNull()
+        }
+    }
+
     private const val LOGIN_PROP_NAME = "login"
     private const val PASS_PROP_NAME = "password"
+    private const val TOKEN_PROP_NAME = "token"
 }

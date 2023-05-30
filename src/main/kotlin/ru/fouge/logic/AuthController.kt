@@ -13,6 +13,10 @@ import java.util.logging.Logger
 
 object AuthController {
 
+    suspend fun checkToken(token: String): Boolean {
+        return AuthDao.checkToken(token)
+    }
+
     suspend fun executeLogin(credentials: CredentialsModel): DomainRespond<Token> {
         if (!validateCredentials(credentials)) return DomainRespond(
             code = HttpStatusCode.BadRequest,
