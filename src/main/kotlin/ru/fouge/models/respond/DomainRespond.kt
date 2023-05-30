@@ -11,5 +11,10 @@ data class DomainRespond<T>(
             code = HttpStatusCode.OK,
             result = DomainRespondResult.Success(data = data)
         )
+
+        fun <T> unauthorized(): DomainRespond<T> = DomainRespond(
+            code = HttpStatusCode.Unauthorized,
+            result = DomainRespondResult.Error.UNAUTHORIZED
+        )
     }
 }

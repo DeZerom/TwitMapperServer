@@ -16,7 +16,7 @@ fun String.toSha256(): String {
 }
 
 suspend fun ApplicationCall.checkToken(): Boolean {
-    val token = request.headers[AUTH_HEADER_KEY] ?: return false
+    val token = getToken() ?: return false
 
     val result = AuthController.checkToken(token)
     if (!result) {
@@ -28,5 +28,7 @@ suspend fun ApplicationCall.checkToken(): Boolean {
 
     return result
 }
+
+fun ApplicationCall.getToken(): String? = request.headers[AUTH_HEADER_KEY]
 
 private const val AUTH_HEADER_KEY = "auth"

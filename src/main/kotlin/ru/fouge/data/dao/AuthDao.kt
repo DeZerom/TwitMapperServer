@@ -15,7 +15,7 @@ import ru.fouge.models.auth.UserModel
 object AuthDao {
 
     suspend fun checkToken(token: String): Boolean {
-        val user = getUserByToken(token = token)
+        val user = getNeoUserByToken(token = token)
 
         return user != null
     }
@@ -56,7 +56,7 @@ object AuthDao {
             null
     }
 
-    private suspend fun getUserByToken(token: String): NeoUserModel? {
+    suspend fun getNeoUserByToken(token: String): NeoUserModel? {
         return NeoDB.executeQueryWithResult {
             loadAll(
                 NeoUserModel::class.java,
