@@ -1,12 +1,10 @@
 package ru.fouge.plugins
 
-import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import ru.fouge.logic.TwitsController
-import ru.fouge.models.respond.DomainRespondResult
 import ru.fouge.models.twits.CreateTwitModel
 import ru.fouge.utils.checkToken
 import ru.fouge.utils.getToken
@@ -41,16 +39,23 @@ fun Application.configureTwits() {
         get("/twit") {
             if (!call.checkToken()) return@get
 
-            val twitId = call.parameters[TWIT_ID]?.toLongOrNull() ?: run {
-                call.respond(
-                    status = HttpStatusCode.BadRequest,
-                    message = DomainRespondResult.Error.WRONG_TWIT_ID.toSendable()
-                )
-
-                return@get
-            }
+            val twitId = call.parameters[TWIT_ID]?.toLongOrNull()
 
             val result = TwitsController.getTwitDetailsById(twitId)
+
+            call.respond(
+                status = result.code,
+                message = result.result.toSendable()
+            )
+        }
+
+        delete("/delete-twit") {
+            if (!call.checkToken()) return@delete
+
+            val twitId = call.parameters[TWIT_ID]?.toLongOrNull()
+            val token = call.getToken()
+
+            val result = TwitsController.deleteTwitById(id = twitId, token = token)
 
             call.respond(
                 status = result.code,

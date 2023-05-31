@@ -12,7 +12,40 @@ import ru.fouge.models.twits.TwitModel
 
 object TwitsController {
 
-    suspend fun getTwitDetailsById(twitId: Long): DomainRespond<DetailedTwitModel> {
+    suspend fun deleteTwitById(id: Long?, token: String?): DomainRespond<Boolean> {
+        if (id == null) return DomainRespond(
+            code = HttpStatusCode.BadRequest,
+            result = DomainRespondResult.Error.WRONG_TWIT_ID
+        )
+
+        if (token == null) return DomainRespond.unauthorized()
+
+        val user = AuthDao.getNeoUserByToken(token)
+        val twit = TwitsDao.getById(id) ?: return DomainRespond(
+            code = HttpStatusCode.BadRequest,
+            result = DomainRespondResult.Error.WRONG_TWIT_ID
+        )
+
+        if (user?.isAdmin == null || !user.isAdmin) {
+            if (twit.author?.id == null || twit.author.id != user?.id) {
+                return DomainRespond(
+                    code = HttpStatusCode.Forbidden,
+                    result = DomainRespondResult.Error.NO_RIGHTS
+                )
+            }
+        }
+
+        val result = TwitsDao.deleteTwitWithComments(twit)
+
+        return DomainRespond.success(result)
+    }
+
+    suspend fun getTwitDetailsById(twitId: Long?): DomainRespond<DetailedTwitModel> {
+        if (twitId == null) return DomainRespond(
+            code = HttpStatusCode.BadRequest,
+            result = DomainRespondResult.Error.WRONG_TWIT_ID
+        )
+
         val result = TwitsDao.getById(twitId)?.toDetailedInternal() ?: return DomainRespond(
             code = HttpStatusCode.BadRequest,
             result = DomainRespondResult.Error.WRONG_TWIT_ID
