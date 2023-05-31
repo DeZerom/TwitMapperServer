@@ -31,4 +31,31 @@ suspend fun ApplicationCall.checkToken(): Boolean {
 
 fun ApplicationCall.getToken(): String? = request.headers[AUTH_HEADER_KEY]
 
+fun ApplicationCall.processOptionsCall(method: HttpMethod) {
+    response.headers.append(
+        name = HttpHeaders.AccessControlAllowMethods,
+        value = method.value,
+        safeOnly = false
+    )
+    response.headers.append(
+        name = HttpHeaders.AccessControlAllowOrigin,
+        value = "http://localhost:3000",
+        safeOnly = false
+    )
+    response.headers.append(
+        name = HttpHeaders.AccessControlAllowHeaders,
+        value = "Content-type,auth",
+        safeOnly = false
+    )
+    response.status(HttpStatusCode.OK)
+}
+
+fun ApplicationCall.addQueryHeader() {
+    response.headers.append(
+        name = HttpHeaders.AccessControlAllowOrigin,
+        value = "http://localhost:3000",
+        safeOnly = false
+    )
+}
+
 private const val AUTH_HEADER_KEY = "auth"
