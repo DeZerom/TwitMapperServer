@@ -8,8 +8,8 @@ import ru.fouge.data.db.NeoDB
 import ru.fouge.data.models.NeoUserModel
 import ru.fouge.mappers.toInternal
 import ru.fouge.mappers.toNeoUserModel
+import ru.fouge.models.auth.AuthRespondModel
 import ru.fouge.models.auth.RegistrationModel
-import ru.fouge.models.auth.Token
 import ru.fouge.models.auth.UserModel
 
 object AuthDao {
@@ -37,7 +37,7 @@ object AuthDao {
         return result?.toInternal()
     }
 
-    suspend fun getTokenByLoginAndPassword(login: String, password: String): Token? {
+    suspend fun getAuthInfoByLoginAndPassword(login: String, password: String): AuthRespondModel? {
         val user = NeoDB.executeQueryWithResult {
             loadAll(
                 NeoUserModel::class.java,
@@ -51,7 +51,7 @@ object AuthDao {
         }
 
         return if (user?.token != null)
-            Token(token = user.token)
+            AuthRespondModel(token = user.token, isAdmin = user.isAdmin)
         else
             null
     }

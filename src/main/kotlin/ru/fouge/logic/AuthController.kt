@@ -2,9 +2,9 @@ package ru.fouge.logic
 
 import io.ktor.http.*
 import ru.fouge.data.dao.AuthDao
+import ru.fouge.models.auth.AuthRespondModel
 import ru.fouge.models.auth.CredentialsModel
 import ru.fouge.models.auth.RegistrationModel
-import ru.fouge.models.auth.Token
 import ru.fouge.models.respond.DomainRespond
 import ru.fouge.models.respond.DomainRespondResult
 import ru.fouge.utils.toSha256
@@ -19,7 +19,7 @@ object AuthController {
         return AuthDao.checkToken(token)
     }
 
-    suspend fun executeLogin(credentials: CredentialsModel): DomainRespond<Token> {
+    suspend fun executeLogin(credentials: CredentialsModel): DomainRespond<AuthRespondModel> {
         if (!validateCredentials(credentials)) return DomainRespond(
             code = HttpStatusCode.BadRequest,
             result = DomainRespondResult.Error.NON_VALID_CREDENTIALS
@@ -28,7 +28,7 @@ object AuthController {
         val newCredentials = credentials.copy(pass = credentials.pass?.toSha256())
         Logger.getAnonymousLogger().log(Level.WARNING, newCredentials.toString())
 
-        val token = AuthDao.getTokenByLoginAndPassword(
+        val token = AuthDao.getAuthInfoByLoginAndPassword(
             login = newCredentials.login ?: "",
             password = newCredentials.pass ?: ""
         )

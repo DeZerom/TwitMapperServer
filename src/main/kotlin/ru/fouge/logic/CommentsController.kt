@@ -25,10 +25,12 @@ object CommentsController {
             result = DomainRespondResult.Error.WRONG_COMMENT_ID
         )
 
-        if (comment.author?.id == null || comment.author.id != user?.id) return DomainRespond(
-            code = HttpStatusCode.Forbidden,
-            result = DomainRespondResult.Error.NO_RIGHTS
-        )
+        if (user?.isAdmin == null || user.isAdmin == false) {
+            if (comment.author?.id == null || comment.author.id != user?.id) return DomainRespond(
+                code = HttpStatusCode.Forbidden,
+                result = DomainRespondResult.Error.NO_RIGHTS
+            )
+        }
 
         val result = CommentDao.deleteComment(comment = comment)
 
