@@ -55,6 +55,11 @@ object TwitsController {
     }
 
     suspend fun createTwit(model: CreateTwitModel, token: String): DomainRespond<Boolean> {
+        if (!validateTwitCreationModel(model)) return DomainRespond(
+            code = HttpStatusCode.BadRequest,
+            result = DomainRespondResult.Error.WRONG_TWIT_CREATION_DATA
+        )
+
         val author = AuthDao.getNeoUserByToken(token) ?: return DomainRespond.unauthorized()
 
         val result = TwitsDao.createTwit(twit = model, author = author)
@@ -75,4 +80,10 @@ object TwitsController {
         }
     }
 
+    private fun validateTwitCreationModel(model: CreateTwitModel): Boolean {
+        return model.text != null
+                && model.lat != null
+                && model.lon != null
+                && model.text.isNotBlank()
+    }
 }
