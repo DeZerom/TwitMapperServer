@@ -11,8 +11,8 @@ sealed interface DomainRespondResult<out T> {
         WRONG_CREDENTIALS("wrong_credentials", "Неверный логин/пароль"),
 
         //comment
-        WRONG_COMMENT_CREATION_DATA("wrong_creation_data", "Пустой текст комментария или неверно указан родительский твит"),
-        WRONG_COMMENT_ID("wrong_comment_id", "Указана неврный идентефикатор комментария"),
+        WRONG_COMMENT_CREATION_DATA("wrong_comment_creation_data", "Пустой текст комментария или неверно указан родительский твит"),
+        WRONG_COMMENT_ID("wrong_comment_id", "Указан неврный идентефикатор комментария"),
 
         //twit
         WRONG_TWIT_ID("wrong_twit_id", "Указан неверный или несуществующий идентефикатор твита"),
