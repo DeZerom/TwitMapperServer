@@ -16,7 +16,7 @@ fun Application.configureComments() {
             if (!call.checkToken()) return@post
 
             val commentModel: CreateCommentModel = call.receive()
-            val token = call.getToken() ?: return@post
+            val token = call.getToken()
 
             val result = CommentsController.createComment(commentModel, token)
 
@@ -26,8 +26,19 @@ fun Application.configureComments() {
             )
         }
 
-        delete("delete-comment") {
+        delete("/delete-comment") {
+            if (!call.checkToken()) return@delete
 
+            val commentId = call.parameters[COMMENT_ID]?.toLongOrNull()
+
+            val result = CommentsController.deleteComment(commentId, call.getToken())
+
+            call.respond(
+                status = result.code,
+                message = result.result.toSendable()
+            )
         }
     }
 }
+
+private const val COMMENT_ID = "id"
