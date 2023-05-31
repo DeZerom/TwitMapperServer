@@ -13,7 +13,7 @@ object CommentsController {
     suspend fun createComment(commentModel: CreateCommentModel, token: String): DomainRespond<Boolean> {
         if (!validateCreateCommentModel(commentModel)) return DomainRespond(
             code = HttpStatusCode.BadRequest,
-            result = DomainRespondResult.Error.WRONG_COMMETN_CREATION_DATA
+            result = DomainRespondResult.Error.WRONG_COMMENT_CREATION_DATA
         )
 
         val author = AuthDao.getNeoUserByToken(token) ?: return DomainRespond.unauthorized()
@@ -21,7 +21,7 @@ object CommentsController {
         val neoCommentModel = commentModel.toNeo(author)
         val twit = TwitsDao.getById(commentModel.twitId ?: 0) ?: return DomainRespond(
             code = HttpStatusCode.BadRequest,
-            result = DomainRespondResult.Error.WRONG_COMMETN_CREATION_DATA
+            result = DomainRespondResult.Error.WRONG_COMMENT_CREATION_DATA
         )
 
         val relationRes = TwitsDao.createRelation(

@@ -13,7 +13,9 @@ import java.util.logging.Logger
 
 object AuthController {
 
-    suspend fun checkToken(token: String): Boolean {
+    suspend fun checkToken(token: String?): Boolean {
+        if (token == null) return false
+
         return AuthDao.checkToken(token)
     }
 

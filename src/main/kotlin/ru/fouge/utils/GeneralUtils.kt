@@ -16,7 +16,7 @@ fun String.toSha256(): String {
 }
 
 suspend fun ApplicationCall.checkToken(): Boolean {
-    val token = getToken() ?: return false
+    val token = getToken()
 
     val result = AuthController.checkToken(token)
     if (!result) {
