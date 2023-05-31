@@ -1,5 +1,6 @@
 package ru.fouge.plugins
 
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -21,10 +22,34 @@ fun Application.configureAuth() {
             )
         }
 
+        options("/login") {
+            call.response.headers.append(
+                name = HttpHeaders.AccessControlAllowMethods,
+                value = "POST",
+                safeOnly = false
+            )
+            call.response.headers.append(
+                name = HttpHeaders.AccessControlAllowOrigin,
+                value = "http://localhost:3000",
+                safeOnly = false
+            )
+            call.response.headers.append(
+                name = HttpHeaders.AccessControlAllowHeaders,
+                value = "Content-type",
+                safeOnly = false
+            )
+            call.response.status(HttpStatusCode.OK)
+        }
+
         post("/login") {
             val data: CredentialsModel = call.receive()
             val result = AuthController.executeLogin(data)
 
+            call.response.headers.append(
+                name = HttpHeaders.AccessControlAllowOrigin,
+                value = "http://localhost:3000",
+                safeOnly = false
+            )
             call.respond(
                 status = result.code,
                 message = result.result.toSendable()
