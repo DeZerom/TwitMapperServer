@@ -13,7 +13,7 @@ import ru.fouge.utils.addComment
 object TwitsDao {
 
     suspend fun getById(id: Long): NeoTwitModel? {
-        return NeoDB.executeQueryWithResult { load(NeoTwitModel::class.java, id) }
+        return NeoDB.executeQueryWithResult { load(NeoTwitModel::class.java, id, TWIT_LOADING_DEPTH) }
     }
 
     suspend fun createRelation(twit: NeoTwitModel, comment: NeoTwitCommentModel): Boolean {
@@ -36,4 +36,6 @@ object TwitsDao {
         }
     }
 
+
+    private const val TWIT_LOADING_DEPTH = 2
 }
