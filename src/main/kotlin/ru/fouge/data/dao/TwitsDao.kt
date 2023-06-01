@@ -4,10 +4,8 @@ import ru.fouge.data.db.NeoDB
 import ru.fouge.data.models.NeoTwitCommentModel
 import ru.fouge.data.models.NeoTwitModel
 import ru.fouge.data.models.NeoUserModel
-import ru.fouge.mappers.toInternal
 import ru.fouge.mappers.toNeo
 import ru.fouge.models.twits.CreateTwitModel
-import ru.fouge.models.twits.TwitModel
 import ru.fouge.utils.addComment
 
 object TwitsDao {
@@ -37,9 +35,9 @@ object TwitsDao {
         return NeoDB.executeQuery { save(neoTwitModel) }
     }
 
-    suspend fun getAll(): List<TwitModel>? {
+    suspend fun getAll(): List<NeoTwitModel>? {
         return NeoDB.executeQueryWithResult {
-            loadAll(NeoTwitModel::class.java).map { it.toInternal() }
+            loadAll(NeoTwitModel::class.java).toList()
         }
     }
 

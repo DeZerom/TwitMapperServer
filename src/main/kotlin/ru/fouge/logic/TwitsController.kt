@@ -1,9 +1,11 @@
 package ru.fouge.logic
 
 import io.ktor.http.*
+import me.xdrop.fuzzywuzzy.FuzzySearch
 import ru.fouge.data.dao.AuthDao
 import ru.fouge.data.dao.TwitsDao
 import ru.fouge.mappers.toDetailedInternal
+import ru.fouge.mappers.toInternal
 import ru.fouge.models.respond.DomainRespond
 import ru.fouge.models.respond.DomainRespondResult
 import ru.fouge.models.twits.CreateTwitModel
@@ -11,6 +13,28 @@ import ru.fouge.models.twits.DetailedTwitModel
 import ru.fouge.models.twits.TwitModel
 
 object TwitsController {
+
+    suspend fun findTwit(query: String?, count: Int?): DomainRespond<List<TwitModel>> {
+        if (query == null || query.isBlank()) return DomainRespond(
+            code = HttpStatusCode.BadRequest,
+            result = DomainRespondResult.Error.WRONG_SEARCH_PARAMETERS
+        )
+
+        if (count == null || count <= 0) return DomainRespond(
+            code = HttpStatusCode.BadRequest,
+            result = DomainRespondResult.Error.WRONG_SEARCH_PARAMETERS
+        )
+
+        val twits = TwitsDao.getAll()
+
+        val results = FuzzySearch.extractSorted(query, twits?.map { it.text })
+            .take(count)
+            .mapNotNull {
+                twits?.getOrNull(it.index)?.toInternal()
+            }
+
+        return DomainRespond.success(results)
+    }
 
     suspend fun deleteTwitById(id: Long?, token: String?): DomainRespond<Boolean> {
         if (id == null) return DomainRespond(
@@ -71,7 +95,7 @@ object TwitsController {
         val result = TwitsDao.getAll()
 
         return if (result != null) {
-            DomainRespond.success(result)
+            DomainRespond.success(result.map { it.toInternal() })
         } else {
             DomainRespond(
                 code = HttpStatusCode.InternalServerError,

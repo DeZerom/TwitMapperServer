@@ -47,7 +47,7 @@ fun Application.configureTwits() {
             if (!call.checkToken()) return@get
             call.addQueryHeader()
 
-            val twitId = call.parameters[TWIT_ID]?.toLongOrNull()
+            val twitId = call.parameters[TWIT_ID_FIELD]?.toLongOrNull()
 
             val result = TwitsController.getTwitDetailsById(twitId)
 
@@ -63,7 +63,7 @@ fun Application.configureTwits() {
             if (!call.checkToken()) return@delete
             call.addQueryHeader()
 
-            val twitId = call.parameters[TWIT_ID]?.toLongOrNull()
+            val twitId = call.parameters[TWIT_ID_FIELD]?.toLongOrNull()
             val token = call.getToken()
 
             val result = TwitsController.deleteTwitById(id = twitId, token = token)
@@ -73,7 +73,26 @@ fun Application.configureTwits() {
                 message = result.result.toSendable()
             )
         }
+
+        options("/find-twit") { call.processOptionsCall(HttpMethod.Get) }
+
+        get("/find-twit") {
+            if (!call.checkToken()) return@get
+            call.addQueryHeader()
+
+            val query = call.parameters[QUERY_FIELD]
+            val count = call.parameters[COUNT_FIELD]?.toIntOrNull()
+
+            val result = TwitsController.findTwit(count = count, query = query)
+
+            call.respond(
+                status = result.code,
+                message = result.result.toSendable()
+            )
+        }
     }
 }
 
-private const val TWIT_ID = "id"
+private const val TWIT_ID_FIELD = "id"
+private const val COUNT_FIELD = "count"
+private const val QUERY_FIELD = "query"
