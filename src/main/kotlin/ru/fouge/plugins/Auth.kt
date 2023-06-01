@@ -8,9 +8,7 @@ import io.ktor.server.routing.*
 import ru.fouge.logic.AuthController
 import ru.fouge.models.auth.CredentialsModel
 import ru.fouge.models.auth.RegistrationModel
-import ru.fouge.utils.addQueryHeader
-import ru.fouge.utils.processOptionsCall
-import ru.fouge.utils.toSendable
+import ru.fouge.utils.*
 
 fun Application.configureAuth() {
     routing {
@@ -28,15 +26,27 @@ fun Application.configureAuth() {
             )
         }
 
-        options("/login") {
-            call.processOptionsCall(HttpMethod.Post)
-        }
+        options("/login") { call.processOptionsCall(HttpMethod.Post) }
 
         post("/login") {
             call.addQueryHeader()
 
             val data: CredentialsModel = call.receive()
             val result = AuthController.executeLogin(data)
+
+            call.respond(
+                status = result.code,
+                message = result.result.toSendable()
+            )
+        }
+
+        options("/getMe") { call.processOptionsCall(HttpMethod.Get) }
+
+        get("/getMe") {
+            if (!call.checkToken()) return@get
+            call.addQueryHeader()
+
+            val result = AuthController.getUser(call.getToken())
 
             call.respond(
                 status = result.code,
