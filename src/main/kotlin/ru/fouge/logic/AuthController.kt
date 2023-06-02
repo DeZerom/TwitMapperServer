@@ -2,11 +2,11 @@ package ru.fouge.logic
 
 import io.ktor.http.*
 import ru.fouge.data.dao.AuthDao
-import ru.fouge.mappers.toInternal
+import ru.fouge.mappers.toExtendedInternal
 import ru.fouge.models.auth.AuthRespondModel
 import ru.fouge.models.auth.CredentialsModel
+import ru.fouge.models.auth.ExtendedUserModel
 import ru.fouge.models.auth.RegistrationModel
-import ru.fouge.models.auth.UserModel
 import ru.fouge.models.respond.DomainRespond
 import ru.fouge.models.respond.DomainRespondResult
 import ru.fouge.utils.toSha256
@@ -15,10 +15,10 @@ import java.util.logging.Logger
 
 object AuthController {
 
-    suspend fun getUser(token: String?): DomainRespond<UserModel> {
+    suspend fun getUserByToken(token: String?): DomainRespond<ExtendedUserModel> {
         if (token == null) return DomainRespond.unauthorized()
 
-        val result = AuthDao.getNeoUserByToken(token)?.toInternal() ?: return DomainRespond.unauthorized()
+        val result = AuthDao.getNeoUserByToken(token)?.toExtendedInternal() ?: return DomainRespond.unauthorized()
 
         return DomainRespond.success(result)
     }

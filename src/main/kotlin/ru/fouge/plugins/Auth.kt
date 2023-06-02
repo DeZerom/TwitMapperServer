@@ -46,7 +46,7 @@ fun Application.configureAuth() {
             if (!call.checkToken()) return@get
             call.addQueryHeader()
 
-            val result = AuthController.getUser(call.getToken())
+            val result = AuthController.getUserByToken(call.getToken())
 
             call.respond(
                 status = result.code,
