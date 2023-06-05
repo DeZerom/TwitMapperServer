@@ -17,7 +17,8 @@ fun NeoTwitModel.toInternal() = TwitModel(
     id = id ?: 0,
     lat = lat ?: .0,
     lon = lon ?: .0,
-    author = author?.toInternal()
+    author = author?.toInternal(),
+    text = text ?: ""
 )
 
 fun NeoTwitModel.toDetailedInternal() = DetailedTwitModel(

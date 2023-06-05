@@ -6,6 +6,7 @@ import ru.fouge.models.auth.UserModel
 data class TwitModel(
     val id: Long,
     val author: UserModel?,
+    val text: String,
     val lat: Double,
     val lon: Double
 )
