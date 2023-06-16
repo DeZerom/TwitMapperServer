@@ -18,6 +18,7 @@ sealed interface DomainRespondResult<out T> {
         WRONG_TWIT_ID("wrong_twit_id", "Указан неверный или несуществующий идентефикатор твита"),
         WRONG_TWIT_CREATION_DATA("wrong_twit_creation_data", "Пустой текст твита или не указаны широта/долгота"),
         WRONG_SEARCH_PARAMETERS("wrong_search_parameters", "Пустой поисковой запрос или неположительное количество требуемых результатов"),
+        WRONG_TWIT_EDIT_PARAMETERS("wtrong_edit_params", "Невырный идентефикатор твита или пустой текст"),
 
         //general
         SOMETHING_WENT_WRONG("something_went_wrong", "Что-то пошло не так"),

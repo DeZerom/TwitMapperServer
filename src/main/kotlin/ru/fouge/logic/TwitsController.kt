@@ -10,9 +10,39 @@ import ru.fouge.models.respond.DomainRespond
 import ru.fouge.models.respond.DomainRespondResult
 import ru.fouge.models.twits.CreateTwitModel
 import ru.fouge.models.twits.DetailedTwitModel
+import ru.fouge.models.twits.EditTwitModel
 import ru.fouge.models.twits.TwitModel
 
 object TwitsController {
+
+    suspend fun editTwit(token: String?, model: EditTwitModel): DomainRespond<Boolean> {
+        if (token.isNullOrEmpty()) return DomainRespond.unauthorized()
+
+
+        if (model.id == null || model.text.isNullOrEmpty()) return DomainRespond(
+            code = HttpStatusCode.BadRequest,
+            result = DomainRespondResult.Error.WRONG_TWIT_EDIT_PARAMETERS
+        )
+
+        val user = AuthDao.getNeoUserByToken(token)
+        val twit = TwitsDao.getById(model.id)?.copy(text = model.text) ?: return DomainRespond(
+            code = HttpStatusCode.BadRequest,
+            result = DomainRespondResult.Error.WRONG_TWIT_ID
+        )
+
+        if (user?.isAdmin == false) {
+            if (twit.author != user) {
+                return DomainRespond(
+                    code = HttpStatusCode.Forbidden,
+                    result = DomainRespondResult.Error.NO_RIGHTS
+                )
+            }
+        }
+
+        val result = TwitsDao.editTwit(twit)
+
+        return DomainRespond.success(result)
+    }
 
     suspend fun findTwit(query: String?, count: Int?): DomainRespond<List<TwitModel>> {
         if (query == null || query.isBlank()) return DomainRespond(

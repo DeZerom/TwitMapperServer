@@ -10,6 +10,12 @@ import ru.fouge.utils.addComment
 
 object TwitsDao {
 
+    suspend fun editTwit(twit: NeoTwitModel): Boolean {
+        return NeoDB.executeQuery {
+            save(twit)
+        }
+    }
+
     suspend fun deleteTwitWithComments(twit: NeoTwitModel): Boolean {
         return NeoDB.executeQuery {
             delete(twit.comments)

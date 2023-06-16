@@ -7,6 +7,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import ru.fouge.logic.TwitsController
 import ru.fouge.models.twits.CreateTwitModel
+import ru.fouge.models.twits.EditTwitModel
 import ru.fouge.utils.*
 
 fun Application.configureTwits() {
@@ -84,6 +85,23 @@ fun Application.configureTwits() {
             val count = call.parameters[COUNT_FIELD]?.toIntOrNull()
 
             val result = TwitsController.findTwit(count = count, query = query)
+
+            call.respond(
+                status = result.code,
+                message = result.result.toSendable()
+            )
+        }
+
+        options("/edit-twit") { call.processOptionsCall(HttpMethod.Post) }
+
+        post("/edit-twit") {
+            if (!call.checkToken()) return@post
+            call.addQueryHeader()
+
+            val token = call.getToken()
+            val body: EditTwitModel = call.receive()
+
+            val result = TwitsController.editTwit(token, body)
 
             call.respond(
                 status = result.code,
